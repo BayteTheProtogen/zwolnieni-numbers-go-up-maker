@@ -1,7 +1,11 @@
 const { chromium } = require('playwright');
 
 (async () => {
-  // 1. Launch browser
+  // Add a random delay (0 to 30 seconds) so parallel jobs don't hit Vercel at the same millisecond
+  const startDelay = Math.floor(Math.random() * 30000);
+  console.log(`Waiting ${startDelay/1000}s to avoid simultaneous hits...`);
+  await new Promise(r => setTimeout(r, startDelay));
+
   const browser = await chromium.launch({ headless: true });
   
   // 2. Randomize User-Agent to ensure Vercel sees a "Unique Visitor"
