@@ -1,26 +1,26 @@
-name: Vercel Analytics Tester
+name: Vercel Analytics Parallel Tester
 on:
   schedule:
-    - cron: '*/7 * * * *'
-  workflow_dispatch: # Allows you to click a button to start it manually
+    - cron: '*/20 * * * *'
+  workflow_dispatch: 
 
 jobs:
-  build:
+  parallel_visits:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        instance: [1, 2, 3, 4, 5, 6]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Install Dependencies
+      - name: Install Playwright
         run: |
           npm init -y
           npm install playwright
           npx playwright install chromium --with-deps
-
       - name: Run Traffic Script
         env:
-          # CHANGE THIS to the number of clicks you want per visit
-          CLICK_COUNT: 3
+          CLICK_COUNT: 4 
         run: node visit.js
