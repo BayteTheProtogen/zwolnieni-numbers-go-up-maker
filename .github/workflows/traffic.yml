@@ -1,6 +1,9 @@
 name: Vercel Analytics Parallel Tester
 on:
   schedule:
+    # Runs every 20 minutes
+    # 6 parallel jobs * 3 runs/hour = 18 visits/hour = 432 visits/day.
+    # You will hit your 500 goal in just over 1 day.
     - cron: '*/20 * * * *'
   workflow_dispatch: 
 
@@ -9,18 +12,39 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        # Spins up 6 different virtual machines with 6 different IPs
         instance: [1, 2, 3, 4, 5, 6]
+      fail-fast: false
+    
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
+
+      # --- CACHING FEATURE: Stops downloading the browser every 20 mins ---
+      - name: Cache Playwright Binaries
+        uses: actions/cache@v3
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            node_modules
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
       - name: Install Playwright
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: |
           npm init -y
           npm install playwright
           npx playwright install chromium --with-deps
+
       - name: Run Traffic Script
         env:
-          CLICK_COUNT: 4 
+          # This controls the number of clicks in your visit.js
+          CLICK_COUNT: 2
         run: node visit.js
