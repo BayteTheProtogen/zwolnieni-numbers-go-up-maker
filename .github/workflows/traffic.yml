@@ -1,8 +1,7 @@
 name: Vercel Analytics Tester
 on:
   schedule:
-    # Runs every 11 minutes (Approx 130 times a day = 520 visits in 4 days)
-    - cron: '*/11 * * * *'
+    - cron: '*/7 * * * *'
   workflow_dispatch: # Allows you to click a button to start it manually
 
 jobs:
@@ -23,5 +22,5 @@ jobs:
       - name: Run Traffic Script
         env:
           # CHANGE THIS to the number of clicks you want per visit
-          CLICK_COUNT: 5 
+          CLICK_COUNT: 3
         run: node visit.js
