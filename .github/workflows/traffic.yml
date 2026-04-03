@@ -1,0 +1,27 @@
+name: Vercel Analytics Tester
+on:
+  schedule:
+    # Runs every 11 minutes (Approx 130 times a day = 520 visits in 4 days)
+    - cron: '*/11 * * * *'
+  workflow_dispatch: # Allows you to click a button to start it manually
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: |
+          npm init -y
+          npm install playwright
+          npx playwright install chromium --with-deps
+
+      - name: Run Traffic Script
+        env:
+          # CHANGE THIS to the number of clicks you want per visit
+          CLICK_COUNT: 5 
+        run: node visit.js
