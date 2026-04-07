@@ -1,10 +1,10 @@
 name: Vercel Analytics Parallel Tester
 on:
-  schedule:
+  #schedule:
     # Runs every 20 minutes
     # 6 parallel jobs * 3 runs/hour = 18 visits/hour = 432 visits/day.
     # You will hit your 500 goal in just over 1 day.
-    - cron: '*/15 * * * *'
+   # - cron: '*/15 * * * *'
   workflow_dispatch: 
 
 jobs:
